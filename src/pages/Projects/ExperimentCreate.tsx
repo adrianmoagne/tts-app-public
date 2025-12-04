@@ -107,7 +107,7 @@ const ExperimentCreate: React.FC = () => {
 		Papa.parse<Record<string, string>>(file, {
 			header: true,
 			skipEmptyLines: true,
-			complete: (results) => {
+			complete: (results: Papa.ParseResult<Record<string, string>>) => {
 				const { data } = results;
 
 				if (data.length === 0) {
@@ -120,7 +120,7 @@ const ExperimentCreate: React.FC = () => {
 				const processedScreenIds = new Set<string>();
 
 				// Process each CSV row - match by screen name
-				data.forEach((row) => {
+				data.forEach((row: Record<string, string>) => {
 					const screenName = row["screen_name"];
 					if (!screenName) return;
 
@@ -188,7 +188,7 @@ const ExperimentCreate: React.FC = () => {
 
 				console.log("CSV imported - Total screens:", updatedScreens.length, "Processed:", processedScreenIds.size);
 			},
-			error: (error) => {
+			error: (error: Error) => {
 				console.error("Error parsing CSV:", error);
 			},
 		});
