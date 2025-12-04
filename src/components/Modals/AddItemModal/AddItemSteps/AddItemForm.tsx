@@ -7,7 +7,7 @@ import { Search } from "react-feather";
 
 const AddItemForm: React.FC = () => {
 	const dispatch = useDispatch();
-	const { position, alignment } = useSelector((state: StoreState) => state.addItem);
+	const { draft } = useSelector((state: StoreState) => state.addItem);
 	const positionsItems: ItemPosition[] = ["UL", "UC", "UR", "CL", "C", "CR", "BL", "BC", "BR"];
 	const alignmentsItems: ItemAlignment[] = [
 		"top-left",
@@ -21,12 +21,34 @@ const AddItemForm: React.FC = () => {
 		"bottom-right",
 	];
 
+	// Derive the selected position from draft state
+	const getSelectedPosition = (): ItemPosition | null => {
+		if (!draft.area || !draft.position) return null;
+		const areaMap: Record<string, string> = { heading: "U", content: "C", footer: "B" };
+		const posMap: Record<string, string> = { left: "L", center: "", right: "R" };
+		const prefix = areaMap[draft.area] || "";
+		const suffix = posMap[draft.position] || "";
+		const result = prefix + (suffix || "C");
+		// Handle special case for center content
+		if (draft.area === "content" && draft.position === "center") return "C";
+		return result as ItemPosition;
+	};
+
+	// Derive the selected alignment from draft state
+	const getSelectedAlignment = (): ItemAlignment | null => {
+		if (!draft.v_align || !draft.h_align) return null;
+		return `${draft.v_align}-${draft.h_align}` as ItemAlignment;
+	};
+
+	const selectedPosition = getSelectedPosition();
+	const selectedAlignment = getSelectedAlignment();
+
 	const handlePostionSelect = (pos: ItemPosition) => {
-		dispatch(addItemActions.setPosition(pos));
+		dispatch(addItemActions.setDraftFromPosition(pos));
 	};
 
 	const handleAlignmentSelect = (align: ItemAlignment) => {
-		dispatch(addItemActions.setAlignment(align));
+		dispatch(addItemActions.setDraftFromAlignment(align));
 	};
 	return (
 		<>
@@ -44,7 +66,7 @@ const AddItemForm: React.FC = () => {
 						<S.SelectableButton
 							key={pos}
 							onClick={() => handlePostionSelect(pos)}
-							$selected={position === pos}
+							$selected={selectedPosition === pos}
 						>
 							{pos}
 						</S.SelectableButton>
@@ -58,7 +80,7 @@ const AddItemForm: React.FC = () => {
 						<S.SelectableButton
 							key={align}
 							onClick={() => handleAlignmentSelect(align)}
-							$selected={alignment === align}
+							$selected={selectedAlignment === align}
 						></S.SelectableButton>
 					))}
 				</S.Grid>

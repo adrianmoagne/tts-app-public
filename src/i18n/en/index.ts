@@ -94,7 +94,7 @@ const en = {
 				UsedIn: "Used in",
 				Extension: "Extension",
 			},
-			Of: "of {total:number} medias",
+			Of: "of {total} medias",
 		},
 		AppSettings: {
 			Language: "Language",
@@ -108,7 +108,7 @@ const en = {
 			Title: "Upload Files",
 			DragAndDrop: "Drag and drop files here, or click to select files",
 			SelectFiles: "Select Files",
-			SelectedFiles: "Selected Files ({count:number})",
+			SelectedFiles: "Selected Files ({count})",
 			ClearAll: "Clear All",
 			SupportedFormats: "Supported formats: Audio (MP3, WAV, etc.) and Images (JPG, PNG, etc.)",
 		},
@@ -144,9 +144,9 @@ const en = {
 	SystemErrors: {
 		InvalidEmail: "Invalid email address.",
 		InvalidPassword:
-			"Password does not meet the requirements. Min {minLength:number} characters, at least.",
+			"Password does not meet the requirements. Min {minLength} characters, at least.",
 		InvalidConfirmPassword: "Passwords do not match.",
-		RequiredField: "The field {name:string} is required.",
+		RequiredField: "The field {name} is required.",
 		EmailAlreadyExists: "This email is already registered.",
 		UsernameAlreadyExists: "This username is already taken.",
 	},

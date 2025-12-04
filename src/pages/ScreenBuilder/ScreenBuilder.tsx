@@ -147,7 +147,6 @@ const ScreenBuilder: React.FC = () => {
 			id: ModalId.SetupNewScreen,
 			title: "Setup New Screen",
 			children: <Modals.SetupNewScreenModal.Content />,
-			customFooter: <Modals.SetupNewScreenModal.Footer />,
 			width: ModalSizes.SetupNewScreen,
 		});
 	};
