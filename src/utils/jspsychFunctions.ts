@@ -118,8 +118,9 @@ export const generateScreenHtml = (screen: IScreen) => {
 
 	return `
           <div style="
-        width: 100%;
-        height: 100%;
+        width: 100vw;
+        height: calc(100vh - 50px);
+        max-height: calc(100vh - 50px);
         display: grid;
         grid-template-rows: repeat(${maxRowsCols}, 1fr); 
         grid-template-columns: repeat(${maxRowsCols}, 1fr);
@@ -127,6 +128,7 @@ export const generateScreenHtml = (screen: IScreen) => {
         padding: 8px;
         box-sizing: border-box;
         margin: 0;
+        overflow: hidden;
       ">
         ${itemsHtml}
       </div>

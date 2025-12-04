@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router";
 import { Button, Typography } from "@leux/ui";
 import { AlertTriangle } from "react-feather";
@@ -9,6 +10,7 @@ const ExperimentPreviewEyeTracking = () => {
   const params = useParams();
   const navigate = useNavigate();
   const experimentId = params.id as string;
+  const [hasStarted, setHasStarted] = useState(false);
 
   const {
     containerRef,
@@ -30,6 +32,7 @@ const ExperimentPreviewEyeTracking = () => {
   };
 
   const handleStartPreview = () => {
+    setHasStarted(true);
     startExperiment();
   };
 
@@ -70,13 +73,15 @@ const ExperimentPreviewEyeTracking = () => {
   }
 
   // Show start button for eye tracking to give user control
-  if (!isLoading && !containerRef.current?.innerHTML) {
-    return (
-      <S.Container>
-        <S.PreviewBanner>
-          <AlertTriangle size={16} />
-          Preview Mode - Data will not be saved
-        </S.PreviewBanner>
+  const showStartButton = !hasStarted && !isLoading;
+
+  return (
+    <S.Container>
+      <S.PreviewBanner>
+        <AlertTriangle size={16} />
+        Preview Mode - Data will not be saved
+      </S.PreviewBanner>
+      {showStartButton && (
         <S.CompletionContainer>
           <Typography variant="h3">Eye Tracking Preview</Typography>
           <Typography>
@@ -89,16 +94,7 @@ const ExperimentPreviewEyeTracking = () => {
             Start Preview
           </Button>
         </S.CompletionContainer>
-      </S.Container>
-    );
-  }
-
-  return (
-    <S.Container>
-      <S.PreviewBanner>
-        <AlertTriangle size={16} />
-        Preview Mode - Data will not be saved
-      </S.PreviewBanner>
+      )}
       {isLoading && (
         <div style={{ textAlign: "center", padding: "40px" }}>
           <Typography>Loading experiment...</Typography>

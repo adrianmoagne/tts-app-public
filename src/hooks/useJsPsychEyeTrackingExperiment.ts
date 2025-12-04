@@ -45,17 +45,30 @@ export const useJsPsychEyeTrackingExperiment = ({
 }: UseJsPsychEyeTrackingOptions): UseJsPsychEyeTrackingReturn => {
 	const containerRef = useRef<HTMLDivElement | null>(null);
 	const jsPsychRef = useRef<any>(null);
-	const [isLoading, setIsLoading] = useState(true);
+	const [isLoading, setIsLoading] = useState(false);
 	const [isFinished, setIsFinished] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [shouldStart, setShouldStart] = useState(false);
+	
+	// Use refs for values that shouldn't trigger effect re-runs
+	const onFinishRef = useRef(onFinish);
+	const participantRef = useRef(participant);
+	
+	// Keep refs updated
+	useEffect(() => {
+		onFinishRef.current = onFinish;
+	}, [onFinish]);
+	
+	useEffect(() => {
+		participantRef.current = participant;
+	}, [participant]);
 
 	useEffect(() => {
 		if (!shouldStart) return;
 
 		const currentContainer = containerRef.current;
 		let isMounted = true;
-		let gazeDot: HTMLDivElement | null = null;
+		// let gazeDot: HTMLDivElement | null = null;
 
 		const runExperiment = async () => {
 			if (!currentContainer) return;
@@ -107,8 +120,8 @@ export const useJsPsychEyeTrackingExperiment = ({
 							currentContainer.innerHTML = "";
 						}
 
-						if (onFinish) {
-							onFinish(resultJson);
+						if (onFinishRef.current) {
+							onFinishRef.current(resultJson);
 						}
 
 						setIsFinished(true);
@@ -118,10 +131,10 @@ export const useJsPsychEyeTrackingExperiment = ({
 				jsPsychRef.current = jsPsych;
 
 				// Add participant data if available
-				if (participant) {
+				if (participantRef.current) {
 					jsPsych.data.addProperties({
-						participantName: participant.name,
-						participantEmail: participant.email,
+						participantName: participantRef.current.name,
+						participantEmail: participantRef.current.email,
 					});
 				} else if (isPreview) {
 					jsPsych.data.addProperties({
@@ -132,20 +145,20 @@ export const useJsPsychEyeTrackingExperiment = ({
 				}
 
 				// Create gaze dot for visualization
-				gazeDot = document.createElement("div");
-				gazeDot.id = "custom-gaze-dot";
-				Object.assign(gazeDot.style, {
-					position: "fixed",
-					width: "12px",
-					height: "12px",
-					borderRadius: "50%",
-					background: "red",
-					pointerEvents: "none",
-					zIndex: "99999",
-					transform: "translate(-50%, -50%)",
-					display: "none",
-				});
-				document.body.appendChild(gazeDot);
+				// gazeDot = document.createElement("div");
+				// gazeDot.id = "custom-gaze-dot";
+				// Object.assign(gazeDot.style, {
+				// 	position: "fixed",
+				// 	width: "12px",
+				// 	height: "12px",
+				// 	borderRadius: "50%",
+				// 	background: "red",
+				// 	pointerEvents: "none",
+				// 	zIndex: "99999",
+				// 	transform: "translate(-50%, -50%)",
+				// 	display: "none",
+				// });
+				// document.body.appendChild(gazeDot);
 
 				const timeline: any[] = [];
 
@@ -176,21 +189,21 @@ export const useJsPsychEyeTrackingExperiment = ({
 				const initCamera = {
 					type: webgazerInitCamera,
 					instructions: `<p>Position your head so that your face is centered in the box and green.</p>`,
-					on_start: () => {
-						if (window.webgazer && gazeDot) {
-							(jsPsych.extensions.webgazer as any).onGazeUpdate(
-								(prediction: { x: number; y: number } | null) => {
-									if (!prediction || !gazeDot) {
-										if (gazeDot) gazeDot.style.display = "none";
-										return;
-									}
-									gazeDot.style.display = "block";
-									gazeDot.style.left = `${prediction.x}px`;
-									gazeDot.style.top = `${prediction.y}px`;
-								}
-							);
-						}
-					},
+					// on_start: () => {
+					// 	if (window.webgazer && gazeDot) {
+					// 		(jsPsych.extensions.webgazer as any).onGazeUpdate(
+					// 			(prediction: { x: number; y: number } | null) => {
+					// 				if (!prediction || !gazeDot) {
+					// 					if (gazeDot) gazeDot.style.display = "none";
+					// 					return;
+					// 				}
+					// 				gazeDot.style.display = "block";
+					// 				gazeDot.style.left = `${prediction.x}px`;
+					// 				gazeDot.style.top = `${prediction.y}px`;
+					// 			}
+					// 		);
+					// 	}
+					// },
 				};
 
 				// Calibration
@@ -206,12 +219,12 @@ export const useJsPsychEyeTrackingExperiment = ({
 					calibration_mode: "view",
 					repetitions_per_point: 2,
 					randomize_calibration_order: true,
-					on_start: () => {
-						if (gazeDot) gazeDot.style.display = "none";
-						if (window.webgazer) {
-							(jsPsych.extensions.webgazer as any).showPredictions(true);
-						}
-					},
+					// on_start: () => {
+					// 	if (gazeDot) gazeDot.style.display = "none";
+					// 	if (window.webgazer) {
+					// 		(jsPsych.extensions.webgazer as any).showPredictions(true);
+					// 	}
+					// },
 				};
 
 				// Validation instructions
@@ -345,15 +358,12 @@ export const useJsPsychEyeTrackingExperiment = ({
 
 					const visualHtml = generateScreenHtml(screen);
 
-					const fixation = {
-						type: htmlKeyboardResponse,
-						stimulus: '<div style="font-size:200px; margin: auto;">+</div>',
-						choices: "NO_KEYS",
-						trial_duration: 3000,
-						on_start: () => {
-							if (gazeDot) gazeDot.style.display = "none";
-						},
-					};
+				const fixation = {
+					type: htmlKeyboardResponse,
+					stimulus: '<div style="width: 100vw; height: calc(100vh - 50px); display: flex; justify-content: center; align-items: center; font-size: 200px; overflow: hidden;">+</div>',
+					choices: "NO_KEYS",
+					trial_duration: 3000,
+				};
 
 					let trial: any;
 					if (audioSource) {
@@ -399,6 +409,20 @@ export const useJsPsychEyeTrackingExperiment = ({
 			jsPsychRef.current?.pluginAPI?.clearAllTimeouts?.();
 
 			try {
+				if (window.webgazer) {
+					// Pause webgazer instead of ending it to avoid DOM errors
+					try {
+						window.webgazer.pause();
+						// Clear regression data
+						if (window.webgazer.clearData) {
+							window.webgazer.clearData();
+						}
+					} catch (e) {
+						console.error("Error pausing webgazer:", e);
+					}
+				}
+
+				// Stop video tracks
 				const videoElement = document.getElementById("webgazerVideoFeed") as HTMLVideoElement;
 				if (videoElement && videoElement.srcObject) {
 					const stream = videoElement.srcObject as MediaStream;
@@ -407,26 +431,31 @@ export const useJsPsychEyeTrackingExperiment = ({
 					videoElement.srcObject = null;
 				}
 
-				if (window.webgazer) {
-					const dot = document.getElementById("custom-gaze-dot");
-					if (dot) dot.remove();
-					try {
-						window.webgazer.end();
-					} catch (e) {
-						console.error("Error ending webgazer:", e);
+				// Remove all webgazer-related DOM elements
+				const elementsToRemove = [
+					"custom-gaze-dot",
+					"webgazerVideoFeed", 
+					"webgazerFaceOverlay", 
+					"webgazerFaceFeedbackBox",
+					"webgazerVideoContainer",
+					"webgazerGazeDot"
+				];
+				
+				elementsToRemove.forEach((id) => {
+					const el = document.getElementById(id);
+					if (el && el.parentNode) {
+						try {
+							el.parentNode.removeChild(el);
+						} catch (e) {
+							// Element might already be removed, ignore
+						}
 					}
-
-					const elements = ["webgazerVideoFeed", "webgazerFaceOverlay", "webgazerFaceFeedbackBox"];
-					elements.forEach((id) => {
-						const el = document.getElementById(id);
-						if (el) el.remove();
-					});
-				}
+				});
 			} catch (e) {
-				console.log(e);
+				console.log("Cleanup error:", e);
 			}
 		};
-	}, [shouldStart, experimentId, participantToken, participant, isPreview, skipParticipantForm, onFinish]);
+	}, [shouldStart, experimentId, participantToken, isPreview, skipParticipantForm]);
 
 	const startExperiment = useCallback(() => {
 		setShouldStart(true);

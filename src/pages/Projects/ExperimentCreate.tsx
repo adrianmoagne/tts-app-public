@@ -40,7 +40,7 @@ const ExperimentCreate: React.FC = () => {
 	const [searchParams] = useSearchParams();
 	const experimentName = searchParams.get("name") || "New Experiment";
 	const experimentDescriptionParam = searchParams.get("description") || "";
-
+	const experimentTypeParam = searchParams.get("type") || "";
 	const handleCreateExperiment = async () => {
 		if (screens.length === 0) {
 			return;
@@ -49,13 +49,15 @@ const ExperimentCreate: React.FC = () => {
 		setIsSubmitting(true);
 
 		try {
+			console.log(experimentTypeParam);
 			const payload = {
 				alias: experimentName,
 				description: experimentDescriptionParam.trim() || undefined,
 				status: "draft" as const,
 				project_id: projectId,
+				type: experimentTypeParam,
 				screens: screens.map((boardScreen) => {
-					const boardScreenId = boardScreen.id;
+					const boardScreenId = boardScreen.id;	
 					const filledValues = boardScreenId ? screenValues[boardScreenId] : {};
 					console.log(boardScreen)
 					return {

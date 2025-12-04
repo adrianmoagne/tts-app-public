@@ -10,29 +10,60 @@ const Container = styled.div`
 	overflow: hidden;
 	margin: 0;
 	padding: 0;
+	position: fixed;
+	top: 0;
+	left: 0;
 
-	/* Force jsPsych content to fill the container */
+	/* Force jsPsych content to fill the container without scrolling */
 	.jspsych-content-wrapper {
 		width: 100% !important;
 		height: 100% !important;
+		max-height: 100vh !important;
 		padding: 0 !important;
 		margin: 0 !important;
 		display: flex !important;
 		flex-direction: column !important;
 		justify-content: center !important;
 		align-items: center !important;
+		overflow: hidden !important;
 	}
 
 	.jspsych-content {
 		width: 100% !important;
+		height: 100% !important;
 		max-width: none !important;
+		max-height: 100vh !important;
 		margin: 0 !important;
 		padding: 0 !important;
+		display: flex !important;
+		flex-direction: column !important;
+		justify-content: center !important;
+		align-items: center !important;
+		overflow: hidden !important;
 	}
 
-	/* Ensure experiment content doesn't show behind banner */
-	#jspsych-html-keyboard-response-stimulus {
-		margin-top: 50px;
+	/* Fixation cross and stimulus screens */
+	#jspsych-html-keyboard-response-stimulus,
+	#jspsych-audio-keyboard-response-stimulus {
+		width: 100vw !important;
+		height: calc(100vh - 50px) !important;
+		max-height: calc(100vh - 50px) !important;
+		display: flex !important;
+		justify-content: center !important;
+		align-items: center !important;
+		overflow: hidden !important;
+		margin: 0 !important;
+		padding: 0 !important;
+		margin-top: 50px !important;
+	}
+
+	/* Audio prompt (image container) */
+	.jspsych-audio-keyboard-response-prompt {
+		width: 100vw !important;
+		height: calc(100vh - 50px) !important;
+		max-height: calc(100vh - 50px) !important;
+		overflow: hidden !important;
+		margin-top: 50px !important;
 	}
 `;
 
