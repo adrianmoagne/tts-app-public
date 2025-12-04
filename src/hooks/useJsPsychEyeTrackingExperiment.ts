@@ -305,8 +305,21 @@ export const useJsPsychEyeTrackingExperiment = ({
 					return;
 				}
 
+				// Fisher-Yates shuffle algorithm to randomize screen order
+				const shuffleArray = <T,>(array: T[]): T[] => {
+					const shuffled = [...array];
+					for (let i = shuffled.length - 1; i > 0; i--) {
+						const j = Math.floor(Math.random() * (i + 1));
+						[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+					}
+					return shuffled;
+				};
+
+				// Randomize screen order for this participant
+				const randomizedScreens: IScreen[] = shuffleArray(experimentData.screens);
+
 				// Add experiment trials
-				experimentData.screens.forEach((screen: IScreen) => {
+				randomizedScreens.forEach((screen: IScreen) => {
 					const targets = screen.items
 						.filter(
 							(item) =>
@@ -322,13 +335,13 @@ export const useJsPsychEyeTrackingExperiment = ({
 							typeof item.media !== "string" &&
 							item.media?.type === "audio"
 					);
-				
-				// Skip if no audio or media is not properly defined
-				if (!audioItem || typeof audioItem.media === "string" || !audioItem.media) {
-					return;
-				}
-				
-				const audioSource = audioItem.media.src;
+
+					// Skip if no audio or media is not properly defined
+					if (!audioItem || typeof audioItem.media === "string" || !audioItem.media) {
+						return;
+					}
+
+					const audioSource = audioItem.media.src;
 
 					const visualHtml = generateScreenHtml(screen);
 
@@ -343,24 +356,24 @@ export const useJsPsychEyeTrackingExperiment = ({
 					};
 
 					let trial: any;
-				if (audioSource) {
-					trial = {
-						type: audioKeyboardResponse,
-						stimulus: audioSource,
-						choices: "NO_KEYS",
-						trial_ends_after_audio: true,
-						prompt: visualHtml,
-						data: { screenId: screen._id },
-						extensions: [
-							{
-								type: jsPsychExtensionWebgazer,
-								params: { targets },
-							},
-						],
-					};
-				}
+					if (audioSource) {
+						trial = {
+							type: audioKeyboardResponse,
+							stimulus: audioSource,
+							choices: "NO_KEYS",
+							trial_ends_after_audio: true,
+							prompt: visualHtml,
+							data: { screenId: screen._id },
+							extensions: [
+								{
+									type: jsPsychExtensionWebgazer,
+									params: { targets },
+								},
+							],
+						};
+					}
 
-				timeline.push(fixation, trial);
+					timeline.push(fixation, trial);
 				});
 
 				setIsLoading(false);

@@ -80,6 +80,16 @@ export const useJsPsychMosExperiment = ({
 		};
 	}, [experimentId, participantToken]);
 
+	// Fisher-Yates shuffle algorithm to randomize screen order
+	const shuffleArray = <T,>(array: T[]): T[] => {
+		const shuffled = [...array];
+		for (let i = shuffled.length - 1; i > 0; i--) {
+			const j = Math.floor(Math.random() * (i + 1));
+			[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+		}
+		return shuffled;
+	};
+
 	// Build and run the jsPsych timeline
 	useEffect(() => {
 		if (!shouldStart || !screens) return;
@@ -88,6 +98,9 @@ export const useJsPsychMosExperiment = ({
 		if (!currentContainer) return;
 
 		currentContainer.innerHTML = "";
+
+		// Randomize screen order for this participant
+		const randomizedScreens = shuffleArray(screens);
 
 		const jsPsych = initJsPsych({
 			display_element: currentContainer,
@@ -126,7 +139,7 @@ export const useJsPsychMosExperiment = ({
 		const timeline: any[] = [];
 		const LeuxRadioTrial = createLeuxRadioTrial(jsPsych);
 
-		screens.forEach((screen: IScreen) => {
+		randomizedScreens.forEach((screen: IScreen) => {
 			const audioItem = screen.items.find(
 				(item) =>
 					item.type === "media" &&
