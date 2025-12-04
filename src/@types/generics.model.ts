@@ -37,6 +37,7 @@ export const ModalId = {
 	TemplateGallery: "template-gallery",
 	NewProject: "new-project",
 	InviteParticipants: "invite-participants",
+	NewExperiment: "new-experiment",
 };
 
 export const ModalSizes: Record<keyof typeof ModalId, number> = {
@@ -50,6 +51,7 @@ export const ModalSizes: Record<keyof typeof ModalId, number> = {
 	TemplateGallery: 1000,
 	NewProject: 400,
 	InviteParticipants: 500,
+	NewExperiment: 480,
 };
 
 export const LocalesArr: SelectOption[] = [

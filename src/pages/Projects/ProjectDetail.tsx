@@ -1,15 +1,16 @@
-import { Table, Typography, Button, Box, Dropdown } from "@leux/ui";
+import { Table, Typography, Button, Box, Dropdown, useModal } from "@leux/ui";
 import { useEffect } from "react";
 import S from "./Projects.styles";
 import { useNavigate, useParams } from "react-router";
 import type { IExperiment, IProject } from "@/@types";
-import { Pages } from "@/@types";
+import { Pages, ModalId, ModalSizes } from "@/@types";
 import type { StoreDispatch, StoreState } from "@/store";
 import { useDispatch, useSelector } from "react-redux";
 import { projectActions } from "@/store";
 import { AlertCircle, Trash2 } from "react-feather";
-import { IconButton } from "@/components";
+import { IconButton, Modals } from "@/components";
 import { useTheme } from "@emotion/react"
+
 const ProjectDetail: React.FC = () => {
 	const params = useParams();
 	const navigate = useNavigate();
@@ -18,13 +19,37 @@ const ProjectDetail: React.FC = () => {
 	const project = projects.find((p: IProject) => p._id === projectId);
 	const dispatch = useDispatch<StoreDispatch>();
 	const theme = useTheme();
-
+	const { createModal, closeModal } = useModal();
 
 	useEffect(() => {
 		if (projects.length === 0) {
 			dispatch(projectActions.fetchProjects());
 		}
 	}, [projects.length, dispatch]);
+
+	const openNewExperimentModal = () => {
+		createModal({
+			id: ModalId.NewExperiment,
+			title: "Create New Experiment",
+			children: (
+				<Modals.NewExperimentModal.Content
+					onSubmit={(data) => {
+						closeModal(ModalId.NewExperiment);
+						// Navigate to experiment create with query params
+						const searchParams = new URLSearchParams({
+							name: data.name,
+							description: data.description,
+							type: data.type,
+						});
+						navigate(`${Pages.ProjectExperimentCreate.replace(":id", project!._id)}?${searchParams.toString()}`);
+					}}
+					onCancel={() => closeModal(ModalId.NewExperiment)}
+				/>
+			),
+			width: ModalSizes.NewExperiment,
+			footer: null,
+		});
+	};
 
 	if (loading || projects.length === 0) {
 		return (
@@ -53,7 +78,7 @@ const ProjectDetail: React.FC = () => {
 				</Typography>
 				<Button
 					colorScheme="primary"
-					onClick={() => navigate(Pages.ProjectExperimentCreate.replace(":id", project._id))}
+					onClick={openNewExperimentModal}
 				>
 					New Experiment
 				</Button>

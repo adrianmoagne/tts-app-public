@@ -5,7 +5,7 @@ import { Download, Monitor, PlusCircle, Table, Upload } from "react-feather";
 import { useTheme } from "@emotion/react";
 import { useRef, useState } from "react";
 import { ModalId, ModalSizes, Pages, type IScreen } from "@/@types";
-import { useNavigate, useParams } from "react-router";
+import { useNavigate, useParams, useSearchParams } from "react-router";
 import { ExperimentService } from "@/api/services";
 import Papa from "papaparse";
 
@@ -25,7 +25,7 @@ const ExperimentCreate: React.FC = () => {
 	const [activeTab, setActiveTab] = useState<TabKey>("displays");
 	const [screens, setScreens] = useState<BoardScreen[]>([]);
 	// const [experimentName, setExperimentName] = useState("");
-	const [experimentDescription, setExperimentDescription] = useState("");
+	// Using experimentDescriptionParam from URL instead
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	// Store filled data: screenId -> itemId -> value (media ID or text content)
 	const [screenValues, setScreenValues] = useState<Record<string, Record<string, string>>>({});
@@ -36,18 +36,22 @@ const ExperimentCreate: React.FC = () => {
 	// take the project id from the url
 	const { id: projectId } = useParams<{ id: string }>();
 
+	// Read experiment config from URL query params (passed from NewExperimentModal)
+	const [searchParams] = useSearchParams();
+	const experimentName = searchParams.get("name") || "New Experiment";
+	const experimentDescriptionParam = searchParams.get("description") || "";
+
 	const handleCreateExperiment = async () => {
 		if (screens.length === 0) {
 			return;
 		}
 		// setExperimentName("Teste");
-		setExperimentDescription("");
 		setIsSubmitting(true);
 
 		try {
 			const payload = {
-				alias: "Just a test",
-				description: experimentDescription.trim() || undefined,
+				alias: experimentName,
+				description: experimentDescriptionParam.trim() || undefined,
 				status: "draft" as const,
 				project_id: projectId,
 				screens: screens.map((boardScreen) => {
@@ -274,7 +278,7 @@ const ExperimentCreate: React.FC = () => {
 		<S.Container>
 			<S.RowBetween>
 				<Typography variant="h3" textColor="textOne">
-					Experiment
+					{experimentName}
 				</Typography>
 				<Button
 					colorScheme="primary"

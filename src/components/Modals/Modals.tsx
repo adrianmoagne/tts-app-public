@@ -8,6 +8,7 @@ import SetupNewScreenModal from "./SetupNewScreenModal/SetupNewScreenModal";
 import TemplateGalleryModal from "./TemplateGalleryModal/TemplateGalleryModal";
 import NewProjectModal from "./NewProject/NewProject";
 import InviteParticipantsModal from "./InviteParticipantsModal/InviteParticipantsModal";
+import NewExperimentModal from "./NewExperimentModal/NewExperimentModal";
 
 const Modals = {
 	UploadModal,
@@ -20,6 +21,7 @@ const Modals = {
 	TemplateGalleryModal,
 	NewProjectModal,
 	InviteParticipantsModal,
+	NewExperimentModal,
 };
 
 export default Modals;

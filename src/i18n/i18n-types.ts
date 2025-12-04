@@ -292,7 +292,7 @@ type RootTranslation = {
 			}
 			/**
 			 * o​f​ ​{​t​o​t​a​l​}​ ​m​e​d​i​a​s
-			 * @param {number} total
+			 * @param {unknown} total
 			 */
 			Of: RequiredParams<'total'>
 		}
@@ -337,7 +337,7 @@ type RootTranslation = {
 			SelectFiles: string
 			/**
 			 * S​e​l​e​c​t​e​d​ ​F​i​l​e​s​ ​(​{​c​o​u​n​t​}​)
-			 * @param {number} count
+			 * @param {unknown} count
 			 */
 			SelectedFiles: RequiredParams<'count'>
 			/**
@@ -445,7 +445,7 @@ type RootTranslation = {
 		InvalidEmail: string
 		/**
 		 * P​a​s​s​w​o​r​d​ ​d​o​e​s​ ​n​o​t​ ​m​e​e​t​ ​t​h​e​ ​r​e​q​u​i​r​e​m​e​n​t​s​.​ ​M​i​n​ ​{​m​i​n​L​e​n​g​t​h​}​ ​c​h​a​r​a​c​t​e​r​s​,​ ​a​t​ ​l​e​a​s​t​.
-		 * @param {number} minLength
+		 * @param {unknown} minLength
 		 */
 		InvalidPassword: RequiredParams<'minLength'>
 		/**
@@ -454,7 +454,7 @@ type RootTranslation = {
 		InvalidConfirmPassword: string
 		/**
 		 * T​h​e​ ​f​i​e​l​d​ ​{​n​a​m​e​}​ ​i​s​ ​r​e​q​u​i​r​e​d​.
-		 * @param {string} name
+		 * @param {unknown} name
 		 */
 		RequiredField: RequiredParams<'name'>
 		/**
@@ -778,7 +778,7 @@ export type TranslationFunctions = {
 			/**
 			 * of {total} medias
 			 */
-			Of: (arg: { total: number }) => LocalizedString
+			Of: (arg: { total: unknown }) => LocalizedString
 		}
 		AppSettings: {
 			/**
@@ -822,7 +822,7 @@ export type TranslationFunctions = {
 			/**
 			 * Selected Files ({count})
 			 */
-			SelectedFiles: (arg: { count: number }) => LocalizedString
+			SelectedFiles: (arg: { count: unknown }) => LocalizedString
 			/**
 			 * Clear All
 			 */
@@ -929,7 +929,7 @@ export type TranslationFunctions = {
 		/**
 		 * Password does not meet the requirements. Min {minLength} characters, at least.
 		 */
-		InvalidPassword: (arg: { minLength: number }) => LocalizedString
+		InvalidPassword: (arg: { minLength: unknown }) => LocalizedString
 		/**
 		 * Passwords do not match.
 		 */
@@ -937,7 +937,7 @@ export type TranslationFunctions = {
 		/**
 		 * The field {name} is required.
 		 */
-		RequiredField: (arg: { name: string }) => LocalizedString
+		RequiredField: (arg: { name: unknown }) => LocalizedString
 		/**
 		 * This email is already registered.
 		 */
